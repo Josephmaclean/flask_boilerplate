@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 from app import dotenv_path
 from dotenv import load_dotenv
 
