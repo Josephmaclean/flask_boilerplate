@@ -45,7 +45,8 @@ jobs:
     - name: Install dependencies
       shell: bash
       run: poetry install
-
-    - name: Test with pytest
+    - name: Run pre-commit
+      uses: pre-commit/action@v2.0.2
+    - name: Test with pytesta
       run: |
         poetry run python -m pytest -v tests
