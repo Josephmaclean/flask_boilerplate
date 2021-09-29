@@ -40,3 +40,7 @@ class AuthServiceInterface(metaclass=abc.ABCMeta):
         """
 
         raise NotImplementedError
+
+    @abc.abstractmethod
+    def reset_password(self, param):
+        raise NotImplementedError

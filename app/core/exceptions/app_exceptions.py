@@ -1,11 +1,11 @@
-from flask import Response
-from flask import json
+from flask import Response, json, current_app
 from sqlalchemy.exc import DBAPIError
 from werkzeug.exceptions import HTTPException
 
 
 class AppExceptionCase(Exception):
     def __init__(self, status_code: int, context):
+        current_app.logger.error(context)
         self.exception_case = self.__class__.__name__
         self.status_code = status_code
         self.context = context
@@ -30,7 +30,6 @@ def app_exception_handler(exc):
             json.dumps({"app_exception": "HTTP Error", "errorMessage": exc.description}),
             status=exc.code,
         )
-
     return Response(
         json.dumps({"app_exception": exc.exception_case, "errorMessage": exc.context}),
         status=exc.status_code,
@@ -70,7 +69,7 @@ class AppException:
             AppExceptionCase.__init__(self, status_code, context)
 
     class NotFoundException(AppExceptionCase):
-        def __init__(self, context="Resource does not exist"):
+        def __init__(self, context="Resource not found"):
             """
             Resource does not exist
             """
@@ -78,12 +77,11 @@ class AppException:
             AppExceptionCase.__init__(self, status_code, context)
 
     class Unauthorized(AppExceptionCase):
-        def __init__(self, context="Unauthorized"):
+        def __init__(self, context="Unauthorized", status_code=401):
             """
             Unauthorized
             :param context: extra dictionary object to give the error more context
             """
-            status_code = 401
             AppExceptionCase.__init__(self, status_code, context)
 
     class ValidationException(AppExceptionCase):

@@ -1,12 +1,10 @@
-import os
 import json
-
 import loguru
+from config import Config
 from kafka import KafkaProducer
 from kafka.errors import KafkaError
 
-KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", default="localhost:90")
-bootstrap_servers = KAFKA_BOOTSTRAP_SERVERS.split("|")
+bootstrap_servers = Config.KAFKA_BOOTSTRAP_SERVERS.split("|")
 
 
 def json_serializer(data):

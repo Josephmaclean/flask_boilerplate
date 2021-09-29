@@ -40,6 +40,11 @@ class Config:
     FLASK_RUN_PORT = 6000
     TESTING = False
     LOGFILE = "log.log"
+    APP_NAME = "distributor"
+
+    KAFKA_BOOTSTRAP_SERVERS = os.getenv(
+        "KAFKA_BOOTSTRAP_SERVERS", default="localhost:9092"
+    )
 
     @property
     def SQLALCHEMY_DATABASE_URI(self):  # noqa

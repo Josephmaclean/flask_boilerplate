@@ -1,18 +1,19 @@
-version: '3.8'
+version: "3.8"
 services:
   backend:
     build:
-      context: .
-      dockerfile: Dockerfile
+     context: .
+     dockerfile: Dockerfile
     environment:
+      DB_ENGINE: ${DB_ENGINE}
       DB_USER: ${DB_USER}
-      DB_SERVER: ${DB_SERVER}
-      DEV_DB_SERVER: ${DEV_DB_SERVER}
-      TEST_DB_SERVER: ${TEST_DB_SERVER}
-      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DEV_DB_HOST: ${DEV_DB_HOST}
+      TEST_DB_HOST: ${TEST_DB_HOST}
       DB_PASSWORD: ${DB_PASSWORD}
-      FLASK_ENV: ${FLASK_ENV}
-      DEBUG: ${DEBUG}
+      DB_NAME: ${DB_NAME}
+      FLASK_ENV: production
       KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID}
       KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
       KEYCLOAK_URI: ${KEYCLOAK_URI}
@@ -21,24 +22,20 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS}
       KAFKA_CONSUMER_GROUP_ID: ${KAFKA_CONSUMER_GROUP_ID}
-      KAFKA_SUBSCRIPTIONS: ${KAFKA_SUBSCRIPTIONS}
-      REDIS_SERVER: ${REDIS_SERVER}
+      KEYCLOAK_CUSTOMER_ROLE_ID: ${KEYCLOAK_CUSTOMER_ROLE_ID}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
-    command: 'flask run --host=0.0.0.0 --port=5000'
+      REDIS_SERVER: ${REDIS_SERVER}
+      SMS_CLIENT_ID: ${SMS_CLIENT_ID}
+      SMS_CLIENT_SECRET: ${SMS_CLIENT_SECRET}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+#    command: "./gunicorn_starter.sh"
     ports:
       - 8000:5000
     volumes:
       - .:/app
     depends_on:
       - db
-#  queue:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    command: 'python -u /app/consumer.py'
-#    restart: always
-#    depends_on:
-#      - db
   redis:
     image: 'redis:4-alpine'
     command: redis-server --requirepass ${REDIS_PASSWORD}
@@ -47,23 +44,10 @@ services:
     ports:
       - '6379:6379'
 
-#  db:
-#    image: postgres:12
-#    restart: always
-#    environment:
-#      POSTGRES_USER: ${DB_USER}
-#      POSTGRES_PASSWORD: ${DB_PASSWORD}
-#      POSTGRES_DB: ${DB_NAME}
-#    volumes:
-#      - $PWD/.dbdata:/var/lib/postgres
-#    ports:
-#      - 5430:5432
   db:
-    image: mongo
+    image: postgres:12
+    restart: always
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
-    restart: on-failure
-    ports:
-      - 27017:27017
-    command: mongod
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
